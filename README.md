@@ -1,1 +1,7 @@
-# django-blog
+# Requirements
+
+
+# Setup Virtual Environment
+
+
+# Install
