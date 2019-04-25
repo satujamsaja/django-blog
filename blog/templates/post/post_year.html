@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Posts for {{ year }}{% endblock %}
+
+{% block content %}
+<h1>Posts for {{ year }}</h1>
+
+{% for post in post_list %}
+    <p>{{ post.post_title }}</p>
+{% endfor %}
+{% endblock %}
