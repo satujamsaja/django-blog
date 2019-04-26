@@ -1,7 +1,4 @@
 # Requirements
-
-
-# Setup Virtual Environment
-
-
-# Install
+* Django
+* django-debug-toolbar
+* martor
