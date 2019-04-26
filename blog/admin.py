@@ -110,13 +110,12 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('post_title', 'category', 'post_summary', 'post_author', 'post_status')
+    list_display = ('post_title', 'category', 'post_summary', 'post_author', 'post_date', 'post_status')
+    list_filter = ('post_date', 'post_status')
     formfield_overrides = {
         models.TextField: {'widget': AdminMartorWidget},
     }
     actions = [publish_post, unpublish_post]
-
-
 
     @staticmethod
     def category(obj):
@@ -124,12 +123,14 @@ class PostAdmin(admin.ModelAdmin):
 
 
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('comment_post', 'comment_name', 'comment_email', 'comment_body', 'comment_status')
+    list_display = ('comment_post', 'comment_name', 'comment_email', 'comment_body',  'comment_date', 'comment_status')
+    list_filter = ('comment_date', 'comment_status')
     actions = [publish_comment, unpublish_comment]
 
 
 class PageAdmin(admin.ModelAdmin):
-    list_display = ('page_name', 'page_status')
+    list_display = ('page_name', 'page_status', 'page_date')
+    list_filter = ('page_date', 'page_status')
     formfield_overrides = {
         models.TextField: {'widget': AdminMartorWidget},
     }

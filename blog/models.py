@@ -24,6 +24,7 @@ class Post(models.Model):
     post_author = models.ForeignKey(User, on_delete=models.CASCADE)
     post_date = models.DateTimeField('post date')
     post_status = models.CharField(max_length=1, choices=POST_STATUS_CHOICES, default='1')
+    post_header = models.ImageField(upload_to='post', default='')
 
     def __str__(self):
         return self.post_title
@@ -55,6 +56,7 @@ class Page(models.Model):
     page_author = models.ForeignKey(User, on_delete=models.CASCADE)
     page_date = models.DateTimeField('page date')
     page_status = models.CharField(max_length=1, choices=PAGE_STATUS_CHOICE, default='1')
+    post_header = models.ImageField(upload_to='page', default='')
 
     def __str__(self):
         return self.page_name

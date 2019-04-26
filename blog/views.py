@@ -24,6 +24,7 @@ class IndexView(generic.ListView):
 
 class DetailView(generic.DetailView):
     model = Post
+    context_object_name = 'post'
     template_name = 'post/post_detail.html'
 
 

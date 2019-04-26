@@ -6,6 +6,7 @@
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'blog/css/bootstrap.min.css' %}" />
     <link rel="stylesheet" href="{% static 'blog/css/app.css' %}" />
+    <link rel="stylesheet" href="{% static 'blog/css/androidstudio.min.css' %}">
 </head>
 <body>
     <div class="container">
@@ -15,7 +16,7 @@
                 <a class="text-muted" href="#">Subscribe</a>
               </div>
               <div class="col-4 text-center">
-                <a class="blog-header-logo text-dark" href="#">Large</a>
+                <a class="blog-header-logo text-dark" href="/">Satujamsaja</a>
               </div>
               <div class="col-4 d-flex justify-content-end align-items-center">
                 <a class="text-muted" href="#">
@@ -42,7 +43,7 @@
           <div class="nav-scroller py-1 mb-2">
             {% block footer %}{% endblock %}
           </div>
-          <p>Django Blog &copy; 2019</p>
+          <p>Satujamsaja Blog &copy; 2019</p>
           <p>
             <a href="#">Back to top</a>
           </p>
@@ -51,5 +52,7 @@
     <script src="{% static 'blog/js/jquery-3.2.1.slim.min.js' %}"></script>
     <script src="{% static 'blog/js/popper.min.js' %}"></script>
     <script src="{% static 'blog/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'blog/js/highlight.min.js' %}"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 </body>
 </html>
