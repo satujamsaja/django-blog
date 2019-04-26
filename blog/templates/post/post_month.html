@@ -1,11 +1,23 @@
 {% extends "base.html" %}
 
-{% block title %}Posts for {{ year }} {{ month }}{% endblock %}
+{% block title %}Blog {{ year }} - {{ month }}{% endblock %}
 
-{% block content %}
-<h1>Posts for {{ year }} {{ month }}</h1>
+{% block header %}
+{% endblock %}
 
-{% for post in post_list %}
-    <p>{{ post.post_title }}</p>
-{% endfor %}
+{% block content %}month
+{% endblock %}
+
+
+{% block sidebar %}
+{% endblock %}
+
+{% block footer %}
+    {% if menu_footer %}
+        <nav class="d-flex justify-content-between">
+            {% for menu in menu_footer %}
+                <a class="p-2 text-muted" href="{{ menu.menu_page.id }}">{{ menu.menu_name }}</a>
+            {% endfor %}
+        </nav>
+    {% endif %}
 {% endblock %}
