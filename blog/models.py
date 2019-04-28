@@ -17,12 +17,22 @@ class Post(models.Model):
         ('1', 'Published'),
         ('0', 'UnPublished'),
     )
+    POST_HEADLINE_CHOICES = (
+        ('1', 'Yes'),
+        ('0', 'No'),
+    )
+    POST_FEATURED_CHOICES = (
+        ('1', 'Yes'),
+        ('0', 'No'),
+    )
     post_title = models.CharField(max_length=255)
     post_summary = models.TextField(blank=False, default='')
     post_body = MartorField(default='')
     post_category = models.ManyToManyField(Category)
     post_author = models.ForeignKey(User, on_delete=models.CASCADE)
     post_date = models.DateTimeField('post date')
+    post_headline = models.CharField(max_length=1, choices=POST_HEADLINE_CHOICES, default='1')
+    post_featured = models.CharField(max_length=1, choices=POST_FEATURED_CHOICES, default='1')
     post_status = models.CharField(max_length=1, choices=POST_STATUS_CHOICES, default='1')
     post_header = models.ImageField(upload_to='post', default='')
 

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import time
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -133,55 +134,19 @@ INTERNAL_IPS = ['127.0.0.1']
 # Martor
 # Input: string boolean, `true/false`
 MARTOR_ENABLE_CONFIGS = {
-    'imgur': 'true',     # to enable/disable imgur/custom uploader.
+    'imgur': 'false',     # to enable/disable imgur/custom uploader.
     'mention': 'false',  # to enable/disable mention
     'jquery': 'true',    # to include/revoke jquery (require for admin default django)
     'living': 'false',   # to enable/disable live updates in preview
 }
 
-# To setup the martor editor with label or not (default is False)
-MARTOR_ENABLE_LABEL = False
-
-# Imgur API Keys
-MARTOR_IMGUR_CLIENT_ID = 'your-client-id'
-MARTOR_IMGUR_API_KEY   = 'your-api-key'
-
-# Safe Mode
-MARTOR_MARKDOWN_SAFE_MODE = True # default
-
-# Markdownify
-MARTOR_MARKDOWNIFY_FUNCTION = 'martor.utils.markdownify' # default
-MARTOR_MARKDOWNIFY_URL = '/martor/markdownify/' # default
-
-# Markdown extensions (default)
-MARTOR_MARKDOWN_EXTENSIONS = [
-    'markdown.extensions.extra',
-    'markdown.extensions.nl2br',
-    'markdown.extensions.smarty',
-    'markdown.extensions.fenced_code',
-
-    # Custom markdown extensions.
-    'martor.extensions.urlize',
-    'martor.extensions.del_ins',    # ~~strikethrough~~ and ++underscores++
-    'martor.extensions.mention',    # to parse markdown mention
-    'martor.extensions.emoji',      # to parse markdown emoji
-    'martor.extensions.mdx_video',  # to parse embed/iframe video
-]
-
 # Markdown Extensions Configs
 MARTOR_MARKDOWN_EXTENSION_CONFIGS = {}
 
-# Markdown urls
-MARTOR_UPLOAD_URL = '/martor/uploader/' # default
-MARTOR_SEARCH_USERS_URL = '/martor/search-user/' # default
-
 # Markdown Extensions
-# MARTOR_MARKDOWN_BASE_EMOJI_URL = 'https://www.webfx.com/tools/emoji-cheat-sheet/graphics/emojis/'     # from webfx
-MARTOR_MARKDOWN_BASE_EMOJI_URL = 'https://github.githubassets.com/images/icons/emoji/'                  # default from github
-MARTOR_MARKDOWN_BASE_MENTION_URL = 'https://python.web.id/author/'
+MARTOR_MARKDOWN_BASE_EMOJI_URL = 'https://github.githubassets.com/images/icons/emoji/'
 
 # Upload to locale storage
-import time
 MARTOR_UPLOAD_PATH = 'images/uploads/{}'.format(time.strftime("%Y/%m/%d/"))
-MARTOR_UPLOAD_URL = '/api/uploader/'  #
-MAX_IMAGE_UPLOAD_SIZE = 5242880  # 5MB
+MARTOR_UPLOAD_URL = '/api/uploader/'
+MAX_IMAGE_UPLOAD_SIZE = 5242880

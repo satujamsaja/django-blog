@@ -110,8 +110,22 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('post_title', 'category', 'post_summary', 'post_author', 'post_date', 'post_status')
-    list_filter = ('post_date', 'post_status')
+    list_display = (
+        'post_title',
+        'category',
+        'post_summary',
+        'post_author',
+        'post_date',
+        'post_headline',
+        'post_featured',
+        'post_status',
+    )
+    list_filter = (
+        'post_date',
+        'post_status',
+        'post_headline',
+        'post_featured'
+    )
     formfield_overrides = {
         models.TextField: {'widget': AdminMartorWidget},
     }

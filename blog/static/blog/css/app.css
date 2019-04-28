@@ -14,3 +14,8 @@
 .blog-post {
     margin-bottom: 4rem;
 }
+
+
+code, pre {
+    border-radius: .25rem!important;
+}
