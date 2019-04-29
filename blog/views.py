@@ -10,22 +10,11 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 
 from martor.utils import LazyEncoder
-from django.views import generic
-from blog.models import Post
+from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
+from blog.models import Post, Category, Menu
 
-
-class IndexView(generic.ListView):
-    template_name = 'post/post_index.html'
-    context_object_name = 'posts'
-
-    def get_queryset(self):
-        return Post.objects.order_by('-post_date')[:5]
-
-
-class DetailView(generic.DetailView):
-    model = Post
-    context_object_name = 'post'
-    template_name = 'post/post_detail.html'
+# Martor image upload view.
 
 
 @login_required
@@ -71,3 +60,36 @@ def markdown_uploader(request):
             return HttpResponse(data, content_type='application/json')
         return HttpResponse(_('Invalid request!'))
     return HttpResponse(_('Invalid request!'))
+
+
+# Post view
+
+class PostIndexView(ListView):
+    template_name = 'post/post_index.html'
+    model = Post
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['menu_header'] = Category.objects.order_by('category_name')
+        context['headline'] = Post.objects.get(
+            post_status__exact='1',
+            post_headline__exact='1')
+        context['featured'] = Post.objects.filter(
+            post_status__exact='1',
+            post_featured__exact='1')[:2]
+        context['posts'] = Post.objects.filter(
+            post_status__exact='1',
+            post_featured__exact='0',
+            post_headline__exact='0')[:5]
+        context['menu_sidebar'] = Menu.objects.filter(
+            menu_status__exact='1',
+            menu_section__section_name__exact='Sidebar'
+        )
+        return context
+
+
+class PostDetailView(DetailView):
+    model = Post
+    context_object_name = 'post'
+    template_name = 'post/post_detail.html'
+

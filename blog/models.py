@@ -34,7 +34,8 @@ class Post(models.Model):
     post_headline = models.CharField(max_length=1, choices=POST_HEADLINE_CHOICES, default='1')
     post_featured = models.CharField(max_length=1, choices=POST_FEATURED_CHOICES, default='1')
     post_status = models.CharField(max_length=1, choices=POST_STATUS_CHOICES, default='1')
-    post_header = models.ImageField(upload_to='post', default='')
+    post_featured_image = models.ImageField(upload_to='post', default='', blank=True)
+    post_header = models.ImageField(upload_to='post', default='', blank=True)
 
     def __str__(self):
         return self.post_title
@@ -66,7 +67,7 @@ class Page(models.Model):
     page_author = models.ForeignKey(User, on_delete=models.CASCADE)
     page_date = models.DateTimeField('page date')
     page_status = models.CharField(max_length=1, choices=PAGE_STATUS_CHOICE, default='1')
-    post_header = models.ImageField(upload_to='page', default='')
+    post_header = models.ImageField(upload_to='page', default='', blank=True)
 
     def __str__(self):
         return self.page_name
