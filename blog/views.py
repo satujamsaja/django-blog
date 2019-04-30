@@ -8,11 +8,12 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from django.shortcuts import get_object_or_404
 
 from martor.utils import LazyEncoder
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
-from blog.models import Post, Category, Menu
+from blog.models import Post, Category, Menu, Page
 
 # Martor image upload view.
 
@@ -70,26 +71,210 @@ class PostIndexView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['menu_header'] = Category.objects.order_by('category_name')
-        context['headline'] = Post.objects.get(
-            post_status__exact='1',
-            post_headline__exact='1')
-        context['featured'] = Post.objects.filter(
-            post_status__exact='1',
-            post_featured__exact='1')[:2]
-        context['posts'] = Post.objects.filter(
-            post_status__exact='1',
-            post_featured__exact='0',
-            post_headline__exact='0')[:5]
-        context['menu_sidebar'] = Menu.objects.filter(
-            menu_status__exact='1',
-            menu_section__section_name__exact='Sidebar'
-        )
+
+        """
+        Menu Header.
+        """
+        try:
+            menu_header = Category.objects.order_by('category_name')
+        except Category.DoesNotExist:
+            menu_header = None
+        context['menu_header'] = menu_header
+
+        """
+        Headline.
+        """
+        try:
+            menu_header = Post.objects.get(
+                post_status__exact='1',
+                post_headline__exact='1',
+            )
+        except Post.DoesNotExist:
+            menu_header = None
+        context['headline'] = menu_header
+
+        """
+        Featured.
+        """
+        try:
+            featured = Post.objects.filter(
+                post_status__exact='1',
+                post_featured__exact='1',
+            )[:2]
+        except Post.DoesNotExist:
+            featured = None
+        context['featured'] = featured
+
+        """
+        Posts.
+        """
+        try:
+            posts = Post.objects.filter(
+                post_status__exact='1',
+                post_featured__exact='0',
+                post_headline__exact='0',
+            )[:5]
+        except Post.DoesNotExist:
+            posts = None
+        context['posts'] = posts
+
+        """
+        Sidebar Menu.
+        """
+        try:
+            menu_sidebar = Menu.objects.filter(
+                menu_status__exact='1',
+                menu_section__section_name__exact='Sidebar',
+            )
+        except Menu.DoesNotExist:
+            menu_sidebar = None
+        context['menu_sidebar'] = menu_sidebar
+
         return context
 
 
 class PostDetailView(DetailView):
+    template_name = 'post/post_detail.html'
     model = Post
     context_object_name = 'post'
-    template_name = 'post/post_detail.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        """
+        Menu Header.
+        """
+        try:
+            menu_header = Category.objects.order_by('category_name')
+        except Category.DoesNotExist:
+            menu_header = None
+        context['menu_header'] = menu_header
+
+        """
+        Menu Sidebar.
+        """
+        try:
+            menu_sidebar = Menu.objects.filter(
+                menu_status__exact='1',
+                menu_section__section_name__exact='Sidebar',
+            )
+        except Menu.DoesNotExist:
+            menu_sidebar = None
+        context['menu_sidebar'] = menu_sidebar
+
+        return context
+
+# Page view
+
+
+class PageDetailView(DetailView):
+    template_name = 'page/page_detail.html'
+    model = Page
+    context_object_name = 'page'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        """
+        Menu Header.
+        """
+        try:
+            menu_header = Category.objects.order_by('category_name')
+        except Category.DoesNotExist:
+            menu_header = None
+        context['menu_header'] = menu_header
+
+        """
+        Menu Sidebar.
+        """
+        try:
+            menu_sidebar = Menu.objects.filter(
+                menu_status__exact='1',
+                menu_section__section_name__exact='Sidebar',
+            )
+        except Menu.DoesNotExist:
+            menu_sidebar = None
+        context['menu_sidebar'] = menu_sidebar
+
+        return context
+
+# Category view
+
+
+class CategoryIndexView(ListView):
+    template_name = 'category/category_index.html'
+    model = Post
+    context_object_name = 'posts'
+    category = object
+
+    def get_queryset(self):
+        self.category = get_object_or_404(Category, pk=self.kwargs['pk'])
+        return Post.objects.filter(post_category__exact=self.category)
+
+    def get_context_data(self, **kwargs):
+        context = super(CategoryIndexView, self).get_context_data(**kwargs)
+
+        """
+        Menu Header.
+        """
+        try:
+            menu_header = Category.objects.order_by('category_name')
+        except Category.DoesNotExist:
+            menu_header = None
+        context['menu_header'] = menu_header
+
+        """
+        Headline.
+        """
+        try:
+            menu_headline = Post.objects.get(
+                post_status__exact='1',
+                post_headline__exact='1',
+                post_category__exact= self.category,
+            )
+        except Post.DoesNotExist:
+            menu_headline = None
+        context['headline'] = menu_headline
+
+        """
+        Featured.
+        """
+        try:
+            featured = Post.objects.filter(
+                post_status__exact='1',
+                post_featured__exact='1',
+                post_category__exact= self.category,
+            )[:2]
+        except Post.DoesNotExist:
+            featured = None
+        context['featured'] = featured
+
+        """
+        Posts.
+        """
+        try:
+            posts = Post.objects.filter(
+                post_status__exact='1',
+                post_featured__exact='0',
+                post_headline__exact='0',
+                post_category__exact=self.category,
+            )[:5]
+        except Post.DoesNotExist:
+            posts = None
+        context['posts'] = posts
+
+        """
+        Menu Sidebar.
+        """
+        try:
+            menu_sidebar = Menu.objects.filter(
+                menu_status__exact='1',
+                menu_section__section_name__exact='Sidebar'
+            )
+        except Menu.DoesNotExist:
+            menu_sidebar = None
+        context['menu_sidebar'] = menu_sidebar
+
+        context['category'] = self.category
+
+        return context

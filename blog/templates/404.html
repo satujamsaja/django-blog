@@ -1,23 +1,2 @@
-{% extends "base.html" %}
-
-{% block title %}Page Not Found{% endblock %}
-
-{% block header %}
-{% endblock %}
-
-{% block content %}404
-{% endblock %}
-
-
-{% block sidebar %}
-{% endblock %}
-
-{% block footer %}
-    {% if menu_footer %}
-        <nav class="d-flex justify-content-between">
-            {% for menu in menu_footer %}
-                <a class="p-2 text-muted" href="{{ menu.menu_page.id }}">{{ menu.menu_name }}</a>
-            {% endfor %}
-        </nav>
-    {% endif %}
-{% endblock %}
+<h1>404 Page Not Found</h1>
+<p>This page does not exist yet!</p>

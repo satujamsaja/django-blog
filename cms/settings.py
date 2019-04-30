@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'blog',
     'martor',
     'debug_toolbar',
+    'clear_cache',
 ]
 
 MIDDLEWARE = [
