@@ -1,23 +1,68 @@
 {% extends "base.html" %}
 
-{% block title %}Blog {{ year }} - {{ month }}{% endblock %}
+{% block title %} Archive {{ archive.month }} {{ archive.year }}{% endblock %}
 
 {% block header %}
+{% if menu_header %}
+<div class="nav-scroller py-1 mb-2">
+<nav class="nav d-flex justify-content-between">
+    {% for menu in menu_header %}
+        <a class="p-2 text-muted" href="{% url 'category-index' menu.id %}">{{ menu.category_name }}</a>
+    {% endfor %}
+</nav>
+</div>
+{% endif %}
+<div class="jumbotron p-3 p-md-5 text-white rounded bg-dark">
+    <div class="col-md-12 px-0">
+      <h1 class="display-4 font-italic">Archive - {{ month }} {{ year }}</h1>
+    </div>
+</div>
 {% endblock %}
 
-{% block content %}month
+{% block content %}
+<h3 class="pb-3 mb-4 font-italic border-bottom">Latest Posts</h3>
+{% if posts %}
+    <ul>
+    {% for post in posts %}
+        <li><a href="{% url 'post-detail' post.id %}">{{ post.post_title }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+<p>No posts in <strong>{{ month }} {{ year}}</strong>.</p>
+{% endif %}
 {% endblock %}
 
 
 {% block sidebar %}
+<div class="p-3 mb-3 bg-light rounded">
+    <h4 class="font-italic">About Me</h4>
+    <p class="mb-0 text-justify">My name is <em>Deni Saputra</em>. This is my blog. I am learning Django CMS framework.</p>
+</div>
+{% if menu_sidebar %}
+<div class="p-3">
+<h4 class="font-italic">Menu</h4>
+<ol class="list-unstyled mb-0">
+    {% for menu in menu_sidebar %}
+        <li><a href="{% url 'page-detail' menu.id %}">{{ menu.menu_name }}</a></li>
+    {% endfor %}
+</ol>
+</div>
+{% endif %}
+{% if all_posts %}
+    {% regroup all_posts by post_date.year as year_list %}
+<div class="p-3">
+<h4 class="font-italic">Archives</h4>
+<ol class="list-unstyled mb-0">
+    {% for year in year_list %}
+        {% regroup year.list by post_date.month as month_list %}
+        {% for month in month_list %}
+            <li><a href="{% url 'monthly-post-archive' year.grouper month.grouper %}">{{ month.list.0.post_date|date:'F' }} {{ year.grouper }} ({{ month.list|length }})</a></li>
+        {% endfor %}
+    {% endfor %}
+</ol>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block footer %}
-    {% if menu_footer %}
-        <nav class="d-flex justify-content-between">
-            {% for menu in menu_footer %}
-                <a class="p-2 text-muted" href="{{ menu.menu_page.id }}">{{ menu.menu_name }}</a>
-            {% endfor %}
-        </nav>
-    {% endif %}
 {% endblock %}

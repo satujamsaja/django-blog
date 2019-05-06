@@ -7,4 +7,5 @@ urlpatterns = [
   path('<int:pk>', views.PostDetailView.as_view(), name='post-detail'),
   path('page/<int:pk>', views.PageDetailView.as_view(), name='page-detail'),
   path('category/<int:pk>', views.CategoryIndexView.as_view(), name='category-index'),
+  path('<int:year>/<int:month>', views.PostMonthlyArchiveView.as_view(), name='monthly-post-archive')
 ]

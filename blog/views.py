@@ -14,6 +14,8 @@ from martor.utils import LazyEncoder
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from blog.models import Post, Category, Menu, Page
+from django.utils.dates import MONTHS
+
 
 # Martor image upload view.
 
@@ -130,6 +132,15 @@ class PostIndexView(ListView):
             menu_sidebar = None
         context['menu_sidebar'] = menu_sidebar
 
+        """
+        Sidebar Archive
+        """
+        try:
+            all_posts = Post.objects.order_by('post_date')
+        except Post.DoesNotExist:
+            all_posts  = None
+        context['all_posts'] = all_posts
+
         return context
 
 
@@ -162,15 +173,21 @@ class PostDetailView(DetailView):
             menu_sidebar = None
         context['menu_sidebar'] = menu_sidebar
 
+        """
+        Sidebar Archive
+        """
+        try:
+            all_posts = Post.objects.order_by('post_date')
+        except Post.DoesNotExist:
+            all_posts = None
+        context['all_posts'] = all_posts
+
         return context
 
-# Page view
 
-
-class PageDetailView(DetailView):
-    template_name = 'page/page_detail.html'
-    model = Page
-    context_object_name = 'page'
+class PostMonthlyArchiveView(ListView):
+    template_name = 'post/post_month.html'
+    model = Post
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -196,6 +213,82 @@ class PageDetailView(DetailView):
             menu_sidebar = None
         context['menu_sidebar'] = menu_sidebar
 
+        """
+        Montly post.
+        """
+        try:
+            posts = Post.objects.filter(
+                post_date__year=self.kwargs['year'],
+                post_date__month=self.kwargs['month']
+            )
+        except Post.DoesNotExist:
+            posts = None
+        context['posts'] = posts
+        context['month'] = MONTHS[self.kwargs['month']]
+        context['year'] = self.kwargs['year']
+
+        """
+        Sidebar Archive
+        """
+        try:
+            all_posts = Post.objects.order_by('post_date')
+        except Post.DoesNotExist:
+            all_posts = None
+        context['all_posts'] = all_posts
+
+        return context
+
+# Page view
+
+
+class PageDetailView(DetailView):
+    template_name = 'page/page_detail.html'
+    model = Page
+    context_object_name = 'page'
+    month = [
+        'Januari',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        ''
+    ]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        """
+        Menu Header.
+        """
+        try:
+            menu_header = Category.objects.order_by('category_name')
+        except Category.DoesNotExist:
+            menu_header = None
+        context['menu_header'] = menu_header
+
+        """
+        Menu Sidebar.
+        """
+        try:
+            menu_sidebar = Menu.objects.filter(
+                menu_status__exact='1',
+                menu_section__section_name__exact='Sidebar',
+            )
+        except Menu.DoesNotExist:
+            menu_sidebar = None
+        context['menu_sidebar'] = menu_sidebar
+
+        """
+        Sidebar Archive
+        """
+        try:
+            all_posts = Post.objects.order_by('post_date')
+        except Post.DoesNotExist:
+            all_posts = None
+        context['all_posts'] = all_posts
+
         return context
 
 # Category view
@@ -206,6 +299,7 @@ class CategoryIndexView(ListView):
     model = Post
     context_object_name = 'posts'
     category = object
+    paginate_by = 1
 
     def get_queryset(self):
         self.category = get_object_or_404(Category, pk=self.kwargs['pk'])
@@ -258,7 +352,7 @@ class CategoryIndexView(ListView):
                 post_featured__exact='0',
                 post_headline__exact='0',
                 post_category__exact=self.category,
-            )[:5]
+            )
         except Post.DoesNotExist:
             posts = None
         context['posts'] = posts
@@ -276,5 +370,14 @@ class CategoryIndexView(ListView):
         context['menu_sidebar'] = menu_sidebar
 
         context['category'] = self.category
+
+        """
+        Sidebar Archive
+        """
+        try:
+            all_posts = Post.objects.order_by('post_date')
+        except Post.DoesNotExist:
+            all_posts = None
+        context['all_posts'] = all_posts
 
         return context

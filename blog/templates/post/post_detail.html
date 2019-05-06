@@ -7,7 +7,7 @@
 <div class="nav-scroller py-1 mb-2">
 <nav class="nav d-flex justify-content-between">
     {% for menu in menu_header %}
-        <a class="p-2 text-muted" href="/blog/category/{{ menu.id }}">{{ menu.category_name }}</a>
+        <a class="p-2 text-muted" href="{% url 'category-index' menu.id %}">{{ menu.category_name }}</a>
     {% endfor %}
 </nav>
 </div>
@@ -31,15 +31,29 @@
 
 {% block sidebar %}
 <div class="p-3 mb-3 bg-light rounded">
-    <h4 class="font-italic">About</h4>
-    <p class="mb-0 text-justify">Etiam porta <em>sem malesuada magna</em> mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p>
+    <h4 class="font-italic">About Me</h4>
+    <p class="mb-0 text-justify">My name is <em>Deni Saputra</em>. This is my blog. I am learning Django CMS framework.</p>
 </div>
 {% if menu_sidebar %}
 <div class="p-3">
 <h4 class="font-italic">Menu</h4>
 <ol class="list-unstyled mb-0">
     {% for menu in menu_sidebar %}
-        <li><a href="/blog/page/{{ menu.id }}">{{ menu.menu_name }}</a></li>
+        <li><a href="{% url 'page-detail' menu.id %}">{{ menu.menu_name }}</a></li>
+    {% endfor %}
+</ol>
+</div>
+{% endif %}
+{% if all_posts %}
+    {% regroup all_posts by post_date.year as year_list %}
+<div class="p-3">
+<h4 class="font-italic">Archives</h4>
+<ol class="list-unstyled mb-0">
+    {% for year in year_list %}
+        {% regroup year.list by post_date.month as month_list %}
+        {% for month in month_list %}
+            <li><a href="{% url 'monthly-post-archive' year.grouper month.grouper %}">{{ month.list.0.post_date|date:'F' }} {{ year.grouper }} ({{ month.list|length }})</a></li>
+        {% endfor %}
     {% endfor %}
 </ol>
 </div>

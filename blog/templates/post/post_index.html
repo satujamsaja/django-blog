@@ -7,7 +7,7 @@
 <div class="nav-scroller py-1 mb-2">
 <nav class="nav d-flex justify-content-between">
     {% for menu in menu_header %}
-        <a class="p-2 text-muted" href="/blog/category/{{ menu.id }}">{{ menu.category_name }}</a>
+        <a class="p-2 text-muted" href="{% url 'category-index' menu.id %}">{{ menu.category_name }}</a>
     {% endfor %}
 </nav>
 </div>
@@ -15,9 +15,9 @@
 {% if headline %}
 <div class="jumbotron p-3 p-md-5 text-white rounded bg-dark">
 <div class="col-md-12 px-0">
-    <h1 class="display-4 font-italic"><a href="/blog/{{ headline.id }}">{{ headline.post_title }}</a></h1>
+    <h1 class="display-4 font-italic"><a href="{% url 'post-detail' headline.id %}">{{ headline.post_title }}</a></h1>
   <p class="lead my-3">{{ headline.post_summary}}</p>
-  <p class="lead mb-0"><a href="/blog/{{ headline.id }}" class="text-white font-weight-bold">Continue reading...</a></p>
+  <p class="lead mb-0"><a href="{% url 'post-detail' headline.id %}" class="text-white font-weight-bold">Continue reading...</a></p>
 </div>
 </div>
 {% endif %}
@@ -29,11 +29,11 @@
             <div class="card-body d-flex flex-column align-items-start">
               <strong class="d-inline-block mb-2 text-primary">{{ feature.post_section }}</strong>
               <h3 class="mb-0">
-                <a class="text-dark" href="/blog/{{ feature.id }}">{{ feature.post_title }}</a>
+                <a class="text-dark" href="{% url 'post-detail' feature.id %}">{{ feature.post_title }}</a>
               </h3>
               <div class="mb-1 text-muted">{{ feature.post_date }}</div>
               <p class="card-text mb-auto">{{ feature.post_summary|truncatewords:20 }}</p>
-              <a href="/blog/{{ feature.id }}">Continue reading</a>
+              <a href="{% url 'post-detail' feature.id %}">Continue reading</a>
             </div>
             <img class="card-img-right flex-auto d-none d-md-block" data-src="holder.js/200x250?theme=thumb" alt="Thumbnail [200x250]" style="width: 200px; height: 250px;" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22200%22%20height%3D%22250%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20250%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_16a5a25e2fd%20text%20%7B%20fill%3A%23eceeef%3Bfont-weight%3Abold%3Bfont-family%3AArial%2C%20Helvetica%2C%20Open%20Sans%2C%20sans-serif%2C%20monospace%3Bfont-size%3A13pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_16a5a25e2fd%22%3E%3Crect%20width%3D%22200%22%20height%3D%22250%22%20fill%3D%22%2355595c%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2256.203125%22%20y%3D%22130.7%22%3EThumbnail%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" data-holder-rendered="true">
           </div>
@@ -48,7 +48,7 @@
 {% if posts %}
     {% for post in posts %}
         <div class="blog-post">
-            <h2 class="blog-post-title"><a href="/blog/{{ post.id }}">{{ post.post_title }}</a></h2>
+            <h2 class="blog-post-title"><a href="{% url 'post-detail' post.id %}">{{ post.post_title }}</a></h2>
             <p class="blog-post-meta">{{ post.post_date}} by <strong>{{ post.post_author }}</strong> in {{ post.post_category.category_name }}</p>
             <div class="blog-summary text-justify">{{ post.post_summary }}</div>
         </div>
@@ -60,15 +60,29 @@
 
 {% block sidebar %}
 <div class="p-3 mb-3 bg-light rounded">
-    <h4 class="font-italic">About</h4>
-    <p class="mb-0 text-justify">Etiam porta <em>sem malesuada magna</em> mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p>
+    <h4 class="font-italic">About Me</h4>
+    <p class="mb-0 text-justify">My name is <em>Deni Saputra</em>. This is my blog. I am learning Django CMS framework.</p>
 </div>
 {% if menu_sidebar %}
 <div class="p-3">
 <h4 class="font-italic">Menu</h4>
 <ol class="list-unstyled mb-0">
     {% for menu in menu_sidebar %}
-        <li><a href="/blog/page/{{ menu.id }}">{{ menu.menu_name }}</a></li>
+        <li><a href="{% url 'page-detail' menu.id %}">{{ menu.menu_name }}</a></li>
+    {% endfor %}
+</ol>
+</div>
+{% endif %}
+{% if all_posts %}
+    {% regroup all_posts by post_date.year as year_list %}
+<div class="p-3">
+<h4 class="font-italic">Archives</h4>
+<ol class="list-unstyled mb-0">
+    {% for year in year_list %}
+        {% regroup year.list by post_date.month as month_list %}
+        {% for month in month_list %}
+            <li><a href="{% url 'monthly-post-archive' year.grouper month.grouper %}">{{ month.list.0.post_date|date:'F' }} {{ year.grouper }} ({{ month.list|length }})</a></li>
+        {% endfor %}
     {% endfor %}
 </ol>
 </div>
@@ -76,11 +90,4 @@
 {% endblock %}
 
 {% block footer %}
-    {% if menu_footer %}
-        <nav class="d-flex justify-content-between">
-            {% for menu in menu_footer %}
-                <a class="p-2 text-muted" href="/blog/page/{{ menu.menu_page.id }}">{{ menu.menu_name }}</a>
-            {% endfor %}
-        </nav>
-    {% endif %}
 {% endblock %}
