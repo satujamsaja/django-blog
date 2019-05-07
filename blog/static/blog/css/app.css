@@ -138,3 +138,20 @@ code {
   font-family: monospace !important;
   font-size: 1.1rem !important;
 }
+
+/*
+ * Background image cover
+ */
+
+.bg-cover {
+  background-size: cover;
+  background-position: center center;
+  position: relative;
+}
+
+/*
+ * Jumbotron bg image link
+ */
+.jumbotron h1 a {
+  color:#ffffff;
+}

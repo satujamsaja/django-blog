@@ -1,6 +1,9 @@
 from django.db import models
+from django.dispatch import receiver
 from django.contrib.auth.models import User
 from martor.models import MartorField
+from versatileimagefield.fields import VersatileImageField, PPOIField
+from versatileimagefield.image_warmer import VersatileImageFieldWarmer
 
 # Create your models here.
 
@@ -10,6 +13,10 @@ class Category(models.Model):
 
     def __str__(self):
         return self.category_name
+
+    class Meta:
+        verbose_name = 'Category',
+        verbose_name_plural = 'Categories'
 
 
 class Post(models.Model):
@@ -34,12 +41,53 @@ class Post(models.Model):
     post_headline = models.CharField(max_length=1, choices=POST_HEADLINE_CHOICES, default='1')
     post_featured = models.CharField(max_length=1, choices=POST_FEATURED_CHOICES, default='1')
     post_status = models.CharField(max_length=1, choices=POST_STATUS_CHOICES, default='1')
-    post_featured_image = models.ImageField(upload_to='post', default='', blank=True)
-    post_header = models.ImageField(upload_to='post', default='', blank=True)
+    post_featured_image = VersatileImageField(
+        'Featured',
+        upload_to='post',
+        default='',
+        blank=True,
+        width_field='post_featured_image_width',
+        height_field='post_featured_image_height',
+        ppoi_field='post_featured_ppoi'
+    )
+    post_featured_image_height = models.PositiveIntegerField(
+        'Image Height',
+        blank=True,
+        null=True
+    )
+    post_featured_image_width = models.PositiveIntegerField(
+        'Image Width',
+        blank=True,
+        null=True
+    )
+    post_featured_ppoi = PPOIField(
+        'Image PPOI'
+    )
+    post_header = VersatileImageField(
+        'Header',
+        upload_to='post',
+        default='',
+        blank=True,
+        width_field='post_header_image_width',
+        height_field='post_header_image_height',
+        ppoi_field='post_header_ppoi'
+    )
+    post_header_image_height = models.PositiveIntegerField(
+        'Image Height',
+        blank=True,
+        null=True
+    )
+    post_header_image_width = models.PositiveIntegerField(
+        'Image Width',
+        blank=True,
+        null=True
+    )
+    post_header_ppoi = PPOIField(
+        'Image PPOI'
+    )
 
     def __str__(self):
         return self.post_title
-
 
 class Comment(models.Model):
     COMMENT_STATUS_CHOICE = (
@@ -67,7 +115,28 @@ class Page(models.Model):
     page_author = models.ForeignKey(User, on_delete=models.CASCADE)
     page_date = models.DateTimeField('page date')
     page_status = models.CharField(max_length=1, choices=PAGE_STATUS_CHOICE, default='1')
-    post_header = models.ImageField(upload_to='page', default='', blank=True)
+    page_header = VersatileImageField(
+        'Header',
+        upload_to='page',
+        default='',
+        blank=True,
+        width_field='page_header_image_width',
+        height_field='page_header_image_height',
+        ppoi_field='page_header_ppoi'
+    )
+    page_header_image_height = models.PositiveIntegerField(
+        'Image Height',
+        blank=True,
+        null=True
+    )
+    page_header_image_width = models.PositiveIntegerField(
+        'Image Width',
+        blank=True,
+        null=True
+    )
+    page_header_ppoi = PPOIField(
+        'Image PPOI'
+    )
 
     def __str__(self):
         return self.page_name
@@ -97,3 +166,61 @@ class Menu(models.Model):
 
     def __str__(self):
         return self.menu_name
+
+# Handle image thumbnail generation on save
+@receiver(models.signals.post_save, sender=Post)
+def warm_post_images(sender, instance, **kwargs):
+    """
+    Pre-warm post header
+    """
+    post_header_image_warmer = VersatileImageFieldWarmer(
+        instance_or_queryset=instance,
+        rendition_key_set='header',
+        image_attr='post_header'
+    )
+    post_header_image_warmer.warm()
+
+    """
+    Pre-warm post featured image
+    """
+    post_featured_image_warmer = VersatileImageFieldWarmer(
+        instance_or_queryset=instance,
+        rendition_key_set='featured',
+        image_attr='post_featured_image'
+    )
+    post_featured_image_warmer.warm()
+
+@receiver(models.signals.post_save, sender=Page)
+def warm_page_images(sender, instance, **kwargs):
+    """
+    Pre- warm post header
+    """
+    page_header_image_warmer = VersatileImageFieldWarmer(
+        instance_or_queryset=instance,
+        rendition_key_set='header',
+        image_attr='page_header'
+    )
+    page_header_image_warmer.warm()
+
+# Handle image deletion on instance delete
+@receiver(models.signals.post_delete, sender=Post)
+def delete_post_images(sender, instance, **kwargs):
+    """
+    Delete post featured images
+    """
+    instance.post_featured_image.delete_all_created_images()
+    instance.post_featured_image.delete(save=False)
+    """
+    Delete post header images
+    """
+    instance.post_header.delete_all_created_images()
+    instance.post_header.delete(save=False)
+
+@receiver(models.signals.post_delete, sender=Page)
+def delete_page_images(sender, instance, **kwargs):
+    """
+    Delete page images
+    """
+    instance.page_header.delete_all_created_images()
+    instance.page_header.delete(save=False)
+

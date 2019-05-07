@@ -12,7 +12,11 @@
 </nav>
 </div>
 {% endif %}
-<div class="jumbotron p-3 p-md-5 text-white rounded bg-dark">
+    {% if post.post_header %}
+<div class="jumbotron p-3 p-md-5 text-white rounded bg-cover" style="background-image: url({{ post.post_header.url }});">
+         {% else %}
+     <div class="jumbotron p-3 p-md-5 text-white rounded bg-dark">
+         {% endif %}
     <div class="col-md-12 px-0">
       <h1 class="display-4 font-italic">{{ post.post_title }}</h1>
       <p class="lead text-justify">{{ post.post_summary }}</p>
