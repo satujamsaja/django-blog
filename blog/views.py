@@ -245,16 +245,6 @@ class PageDetailView(DetailView):
     template_name = 'page/page_detail.html'
     model = Page
     context_object_name = 'page'
-    month = [
-        'Januari',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        ''
-    ]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
