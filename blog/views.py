@@ -16,6 +16,8 @@ from django.views.generic.detail import DetailView
 from blog.models import Post, Category, Menu, Page
 from django.utils.dates import MONTHS
 
+from blog.forms import CommentForm
+
 
 # Martor image upload view.
 
@@ -181,6 +183,11 @@ class PostDetailView(DetailView):
         except Post.DoesNotExist:
             all_posts = None
         context['all_posts'] = all_posts
+
+        """
+        Comment Form
+        """
+        context['comment_form'] = CommentForm()
 
         return context
 

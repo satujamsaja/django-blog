@@ -55,7 +55,11 @@
     {% for post in posts %}
         <div class="blog-post">
             <h2 class="blog-post-title"><a href="{% url 'post-detail' post.id %}">{{ post.post_title }}</a></h2>
-            <p class="blog-post-meta">{{ post.post_date | date:"M j" }} by <strong>{{ post.post_author }}</strong> in {{ post.post_category.category_name }}</p>
+            <p class="blog-post-meta">{{ post.post_date | date:"M j" }} by <strong>{{ post.post_author }}</strong> in
+            {% for category in post.post_category.all %}
+                <a href="{% url 'category-index' category.id %}">{{ category.category_name }}</a>
+            {% endfor %}
+            </p>
             <div class="blog-summary text-justify">{{ post.post_summary }}</div>
         </div>
     {% endfor %}
