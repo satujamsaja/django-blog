@@ -3,7 +3,7 @@ import json
 import uuid
 
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import default_storage
@@ -13,10 +13,11 @@ from django.shortcuts import get_object_or_404
 from martor.utils import LazyEncoder
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
-from blog.models import Post, Category, Menu, Page
+from blog.models import Post, Category, Menu, Page, Comment
 from django.utils.dates import MONTHS
 
 from blog.forms import CommentForm
+import datetime
 
 
 # Martor image upload view.
@@ -185,11 +186,37 @@ class PostDetailView(DetailView):
         context['all_posts'] = all_posts
 
         """
+        Comment List
+        """
+        try:
+            all_comments = Comment.objects.filter(
+                comment_post__exact=self.kwargs['pk'],
+                comment_status__exact='1',
+            )
+        except Comment.DoesNotExist:
+            all_comments = None
+        context['all_comments'] = all_comments
+
+        """
         Comment Form
         """
+
         context['comment_form'] = CommentForm()
 
         return context
+
+    def post(self, request, *args, **kwargs):
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.comment_status = 0
+            comment.comment_date = datetime.date.today()
+            comment.save()
+            return HttpResponseRedirect(request.get_full_path())
+        else:
+            context = self.get_context_data(**kwargs)
+            context.update({'comment_form': comment_form})
+            return self.render_to_response(context)
 
 
 class PostMonthlyArchiveView(ListView):

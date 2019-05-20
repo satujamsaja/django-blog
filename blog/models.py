@@ -89,6 +89,7 @@ class Post(models.Model):
     def __str__(self):
         return self.post_title
 
+
 class Comment(models.Model):
     COMMENT_STATUS_CHOICE = (
         ('1', 'Published'),
