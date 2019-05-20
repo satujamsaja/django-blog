@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'clear_cache',
     'versatileimagefield',
-    'widget_tweaks'
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [

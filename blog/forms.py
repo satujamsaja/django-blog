@@ -13,7 +13,6 @@ class CommentForm(ModelForm):
             'comment_name',
             'comment_email',
             'comment_body',
-            'comment_post',
         ]
 
 

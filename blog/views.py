@@ -15,6 +15,7 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from blog.models import Post, Category, Menu, Page, Comment
 from django.utils.dates import MONTHS
+from django.contrib import messages
 
 from blog.forms import CommentForm
 import datetime
@@ -200,18 +201,20 @@ class PostDetailView(DetailView):
         """
         Comment Form
         """
-
         context['comment_form'] = CommentForm()
 
         return context
 
     def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
         comment_form = CommentForm(request.POST)
         if comment_form.is_valid():
             comment = comment_form.save(commit=False)
+            comment.comment_post = self.object
             comment.comment_status = 0
             comment.comment_date = datetime.date.today()
             comment.save()
+            messages.success(self.request, 'Comment successfully added for moderation.')
             return HttpResponseRedirect(request.get_full_path())
         else:
             context = self.get_context_data(**kwargs)
