@@ -8,7 +8,7 @@
 * django-markdownx (https://github.com/neutronX/django-markdownx)
 
 # Screenshot
-[![Django Blog](https://raw.githubusercontent.com/satujamsaja/django-blog/master/screenshot.png)]
+![Django Blog](https://raw.githubusercontent.com/satujamsaja/django-blog/master/screenshot.png)
 
 # Installation
 * Create virtual environment
