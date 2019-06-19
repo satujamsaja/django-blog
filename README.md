@@ -7,6 +7,9 @@
 * django-widget-tweaks (https://github.com/jazzband/django-widget-tweaks)
 * django-markdownx (https://github.com/neutronX/django-markdownx)
 
+# Screenshot
+[![Django Blog](https://raw.githubusercontent.com/satujamsaja/django-blog/master/screenshot.png)]
+
 # Installation
 * Create virtual environment
 * Clone repo to local development
