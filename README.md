@@ -5,6 +5,7 @@
 * django-clear-cache (https://github.com/rdegges/django-clear-cache)
 * django-versatileimagefield (https://github.com/respondcreate/django-versatileimagefield)
 * django-widget-tweaks (https://github.com/jazzband/django-widget-tweaks)
+* django-markdownx (https://github.com/neutronX/django-markdownx)
 
 # Installation
 * Create virtual environment

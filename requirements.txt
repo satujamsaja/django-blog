@@ -3,4 +3,5 @@ django-clear-cache
 django-debug-toolbar
 django-versatileimagefield
 django-widget-tweaks
+django-markdownx
 martor
